@@ -28,14 +28,15 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
         entityCadastrado.setDescricao(entity.getDescricao());
         entityCadastrado.setNome(entity.getNome());
         entityCadastrado.setValor(entity.getValor());
+        entityCadastrado.setCategoria(entity.getCategoria()); // Atualizando categoria
     }
 
     @Override
     protected String getQueryInsercao() {
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO TB_PRODUTO ");
-        sb.append("(ID, CODIGO, NOME, DESCRICAO, VALOR)");
-        sb.append("VALUES (nextval('sq_produto'),?,?,?,?)");
+        sb.append("(ID, CODIGO, NOME, DESCRICAO, VALOR, CATEGORIA)"); // Adicionando CATEGORIA
+        sb.append("VALUES (nextval('sq_produto'),?,?,?,?,?)"); // Adicionando ? para categoria
         return sb.toString();
     }
 
@@ -45,6 +46,7 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
         stmInsert.setString(2, entity.getNome());
         stmInsert.setString(3, entity.getDescricao());
         stmInsert.setBigDecimal(4, entity.getValor());
+        stmInsert.setString(5, entity.getCategoria()); // Setando categoria
     }
 
     @Override
@@ -64,7 +66,8 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
         sb.append("SET CODIGO = ?,");
         sb.append("NOME = ?,");
         sb.append("DESCRICAO = ?,");
-        sb.append("VALOR = ?");
+        sb.append("VALOR = ?,");
+        sb.append("CATEGORIA = ?"); // Adicionando CATEGORIA
         sb.append(" WHERE CODIGO = ?");
         return sb.toString();
     }
@@ -75,7 +78,8 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
         stmUpdate.setString(2, entity.getNome());
         stmUpdate.setString(3, entity.getDescricao());
         stmUpdate.setBigDecimal(4, entity.getValor());
-        stmUpdate.setString(5, entity.getCodigo());
+        stmUpdate.setString(5, entity.getCategoria()); // Setando categoria
+        stmUpdate.setString(6, entity.getCodigo()); // Último parâmetro é o código
     }
 
     @Override
@@ -102,6 +106,7 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
                 produto.setNome(rs.getString("NOME"));
                 produto.setDescricao(rs.getString("DESCRICAO"));
                 produto.setValor(rs.getBigDecimal("VALOR"));
+                produto.setCategoria(rs.getString("CATEGORIA")); // Setando categoria
             } else {
                 throw new TableException("Produto não encontrado.");
             }
@@ -131,6 +136,7 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
                 produto.setNome(rs.getString("NOME"));
                 produto.setDescricao(rs.getString("DESCRICAO"));
                 produto.setValor(rs.getBigDecimal("VALOR"));
+                produto.setCategoria(rs.getString("CATEGORIA")); // Setando categoria
                 produtos.add(produto);
             }
         } catch (SQLException e) {
@@ -162,14 +168,15 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
         Connection connection = null;
         PreparedStatement stm = null;
         try {
-            String sql = "UPDATE TB_PRODUTO SET CODIGO = ?, NOME = ?, DESCRICAO = ?, VALOR = ? WHERE CODIGO = ?";
+            String sql = "UPDATE TB_PRODUTO SET CODIGO = ?, NOME = ?, DESCRICAO = ?, VALOR = ?, CATEGORIA = ? WHERE CODIGO = ?";
             connection = getConnection();
             stm = connection.prepareStatement(sql);
             stm.setString(1, entity.getCodigo());
             stm.setString(2, entity.getNome());
             stm.setString(3, entity.getDescricao());
             stm.setBigDecimal(4, entity.getValor());
-            stm.setString(5, entity.getCodigo());
+            stm.setString(5, entity.getCategoria()); // Setando categoria
+            stm.setString(6, entity.getCodigo()); // Último parâmetro é o código
             stm.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erro ao atualizar produto", e);
@@ -180,7 +187,7 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
 
     @Override
     public void atualizar(Cliente entity) throws DAOException {
-        // Implementação vazia ou lógica para Cliente, conforme necessidade
+
         throw new UnsupportedOperationException("Método não implementado para Cliente");
     }
 }
